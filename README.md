@@ -1,7 +1,12 @@
-# Welcome to Remix + Cloudflare!
+# ShareReads
 
-- 📖 [Remix docs](https://remix.run/docs)
-- 📖 [Remix Cloudflare docs](https://remix.run/guides/vite#cloudflare)
+Quickly create and share lists of books with anyone 
+
+🚀 https://sharereads.xyz/
+
+Built using Cloudflare Pages, Cloudflare KV, and MongoDB 
+
+![Kapture 2024-12-20 at 16 17 22](https://github.com/user-attachments/assets/e0faef8f-2323-4e06-8c7a-3f5093bc4b5d)
 
 ## Development
 
@@ -9,13 +14,6 @@ Run the dev server:
 
 ```sh
 npm run dev
-```
-
-To run Wrangler:
-
-```sh
-npm run build
-npm run start
 ```
 
 ## Typegen
