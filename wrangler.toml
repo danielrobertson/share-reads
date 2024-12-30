@@ -21,7 +21,7 @@ compatibility_flags = ["nodejs_compat"]
 # Note: Use secrets to store sensitive data.
 # - https://developers.cloudflare.com/pages/functions/bindings/#secrets
 [vars]
-MONGODB_URI = ""
+FAUNA_SECRET = ""
 
 # Bind the Workers AI model catalog. Run machine learning models, powered by serverless GPUs, on Cloudflare’s global network
 # Docs: https://developers.cloudflare.com/pages/functions/bindings/#workers-ai
@@ -82,3 +82,7 @@ MONGODB_URI = ""
 # [[env.production.kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
 # id = "<PRODUCTION_NAMESPACE_ID>"
+
+[[env.production.bindings]]
+name = "FAUNA_SECRET"
+type = "secret"
