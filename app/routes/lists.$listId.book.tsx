@@ -1,34 +1,39 @@
 import { ActionFunctionArgs } from "@remix-run/cloudflare";
 import { json } from "@remix-run/node";
-import { mongodb, DB_NAME, COLLECTIONS, ObjectId } from "~/utils/db.server";
+import { Client, fql } from "fauna";
+import invariant from "tiny-invariant";
+import { BookList } from "~/types";
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request, params, context }: ActionFunctionArgs) {
   const { listId } = params;
+  invariant(listId, "Expected params.listId");
+
   const body = await request.formData();
   const bookJson = body.get("book");
-  const book = JSON.parse(bookJson as string);
+  const newBook = JSON.parse(bookJson as string);
+
+  const client = new Client({
+    secret: context.cloudflare.env.FAUNA_SECRET,
+  });
 
   switch (request.method) {
     case "PUT": {
       // update list with book
-      const db = await mongodb.db(DB_NAME);
-      const collection = await db.collection(COLLECTIONS.LISTS);
-      const list = await collection.findOne({
-        _id: new ObjectId(listId),
-      });
+      try {
+        const result = await client.query<BookList>(fql`
+          let list = BookList.byId(${listId})!
+          list.update({
+            books: list.books.concat([${newBook}])
+          })
+          `);
 
-      if (!list) {
-        return json({ error: "List not found" }, { status: 404 });
+        return json({ result });
+      } catch (error) {
+        // TODO Sentry
+        console.error("Database error:", error);
+        return json({ error: "Database error" }, { status: 500 });
       }
 
-      list.books.push(book);
-      const result = await collection.updateOne(
-        { _id: new ObjectId(listId) },
-        { $set: { books: list.books } }
-      );
-
-      console.log("🚀 ~ action ~ result:", result);
-      return json({ success: true });
       break;
     }
     case "DELETE": {

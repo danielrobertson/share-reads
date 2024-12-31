@@ -1,4 +1,4 @@
-import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/cloudflare";
+import type { LinksFunction } from "@remix-run/cloudflare";
 import {
   Links,
   Meta,
@@ -22,13 +22,6 @@ export const links: LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
-
-export const loader = async ({ context }: LoaderFunctionArgs) => {
-  // Make DATABASE_URL available globally for Prisma
-  globalThis.MONGODB_URI = context.cloudflare.env.MONGODB_URI;
-
-  return {};
-};
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

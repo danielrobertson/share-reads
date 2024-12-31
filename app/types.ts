@@ -1,4 +1,7 @@
+import { QueryValue } from "fauna";
+
 export interface BookResult {
+  [key: string]: QueryValue;
   id: string;
   volumeInfo: {
     title: string;
@@ -10,3 +13,9 @@ export interface BookResult {
     publishedDate?: string;
   };
 }
+
+export type BookList = {
+  [key: string]: QueryValue;
+  id: string;
+  books: BookResult[];
+};

@@ -15,8 +15,8 @@ import BookResultCard from "~/components/book-result-card";
 
 import "./../tailwind.css";
 import { StickyHeader } from "~/components/sticky-header";
-import { ObjectId } from "mongodb";
-import { COLLECTIONS, DB_NAME, ListModel, mongodb } from "~/utils/db.server";
+import { Client, fql } from "fauna";
+import { BookList } from "~/types";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -31,19 +31,31 @@ export const links: LinksFunction = () => [
   },
 ];
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, context }: LoaderFunctionArgs) {
   invariant(params.listId, "Expected params.listId");
 
-  const db = await mongodb.db(DB_NAME);
-  const collection = await db.collection<ListModel>(COLLECTIONS.LISTS);
-  const list = await collection.findOne({ _id: new ObjectId(params.listId) });
+  try {
+    const client = new Client({
+      secret: context.cloudflare.env.FAUNA_SECRET,
+    });
 
-  return json({ list });
+    const result = await client.query<BookList>(fql`
+      let list = BookList.byId(${params.listId})!
+      list
+      `);
+
+    console.log("🚀 ~ loader ~ list:", result);
+
+    return json({ booklist: result.data });
+  } catch (error) {
+    console.error("Database error:", error);
+    return json({ booklist: null }, { status: 500 });
+  }
 }
 
 export default function ListViewPage() {
-  const { list } = useLoaderData<typeof loader>();
-  console.log("🚀 ~ ListViewPage ~ data:", list);
+  const { booklist } = useLoaderData<typeof loader>();
+  console.log("🚀 ~ ListViewPage ~ data:", booklist);
 
   return (
     <html lang="en">
@@ -66,7 +78,7 @@ export default function ListViewPage() {
             </StickyHeader>
             <main>
               <ul className="mt-3 space-y-2">
-                {list?.books.map((book) => (
+                {booklist?.books.map((book) => (
                   <li
                     key={book.id}
                     className="flex justify-between items-center"

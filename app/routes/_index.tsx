@@ -1,5 +1,6 @@
+import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { MetaFunction, Outlet, redirect } from "@remix-run/react";
-import { COLLECTIONS, DB_NAME, mongodb } from "./../utils/db.server";
+import { Client, fql } from "fauna";
 
 export const BOOKS_FORM_KEY = "books";
 
@@ -10,17 +11,18 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = async () => {
+export const loader = async ({ context }: LoaderFunctionArgs) => {
   try {
-    const db = await mongodb.db(DB_NAME);
-    const collection = await db.collection(COLLECTIONS.LISTS);
-    const newList = await collection.insertOne({
-      books: [],
+    const client = new Client({
+      secret: context.cloudflare.env.FAUNA_SECRET,
     });
 
-    const id = newList.insertedId.toString();
+    const result = await client.query<string>(fql`
+      let newList = BookList.create({ books: [] })
+      newList.id
+    `);
 
-    return redirect(`/lists/edit/${id}`);
+    return redirect(`/lists/edit/${result.data}`);
   } catch (error) {
     console.error("Database connection error:", error);
     throw new Response("Internal Server Error", { status: 500 });

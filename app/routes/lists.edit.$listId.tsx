@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import copy from "copy-to-clipboard";
 import { BookOpen, Check, Copy } from "lucide-react";
 import invariant from "tiny-invariant";
+import { Client, fql } from "fauna";
 
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/node";
 
 import { StickyHeader } from "~/components/sticky-header";
 import { BookSearchWithListComponent } from "~/components/book-search-with-list";
@@ -18,37 +20,37 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { useBooklist } from "~/components/contexts/BooklistContext";
-
-import {
-  COLLECTIONS,
-  DB_NAME,
-  ListModel,
-  mongodb,
-  ObjectId,
-} from "../utils/db.server";
+import { BookList } from "~/types";
 
 export const BOOKS_FORM_KEY = "books";
 
-export const loader = async ({ params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, context }: LoaderFunctionArgs) => {
   invariant(params.listId, "Expected params.listId");
 
-  const db = await mongodb.db(DB_NAME);
-  const collection = await db.collection<ListModel>(COLLECTIONS.LISTS);
-  const list = await collection.findOne({
-    _id: new ObjectId(params.listId),
-  });
+  try {
+    const client = new Client({
+      secret: context.cloudflare.env.FAUNA_SECRET,
+    });
 
-  if (!list) {
+    const response = await client.query<BookList>(fql`
+      let list = BookList.byId(${params.listId})!
+      list
+    `);
+
+    const booklist = response.data;
+
+    console.log("🚀 ~ loader ~ booklist:", booklist);
+
+    return json({ booklist });
+  } catch (error) {
+    console.error("Database error:", error);
     throw new Response("List not found", { status: 404 });
   }
-
-  return { list: { ...list, _id: list._id.toString() } };
 };
 
 export default function EditListPage() {
-  const { list } = useLoaderData<typeof loader>();
-  const listId = list._id;
-  // todo: handle case where id is null when DB connection fails
+  const { booklist } = useLoaderData<typeof loader>();
+  const listId = booklist.id;
 
   const { bookList } = useBooklist();
 
@@ -105,7 +107,7 @@ export default function EditListPage() {
               </DialogHeader>
               <div className="mt-4">
                 <Button
-                  onClick={() => copyShareUrl(list._id.toString())}
+                  onClick={() => copyShareUrl(listId)}
                   className="w-full mb-4"
                 >
                   {isCopied ? (
