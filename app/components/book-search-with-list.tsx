@@ -86,6 +86,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
           handleSearch(query);
         }}
         className="mb-6"
+        id="book-search-form"
       >
         <div className="flex gap-2">
           <Input
@@ -94,8 +95,9 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search for books..."
             className="flex-grow"
+            id="book-search-input"
           />
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} id="book-search-button">
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
@@ -106,7 +108,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
       </form>
 
       {!hasSearched && !isLoading && (
-        <div className="text-center py-4">
+        <div className="text-center py-4" id="book-search-empty-state">
           <img
             src={emptyUrl}
             alt="Where is everything?"
@@ -132,7 +134,11 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
           <h2 className="text-xl font-semibold mb-4">Search Results</h2>
           <ul className="space-y-4">
             {searchResults.map((book) => (
-              <li key={book.id} className="flex justify-between items-center">
+              <li
+                key={book.id}
+                className="flex justify-between items-center"
+                id="book-search-result"
+              >
                 <BookResultCard
                   book={book}
                   addToList={addToList}

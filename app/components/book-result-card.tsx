@@ -55,6 +55,7 @@ export default function BookResultCard({ book, addToList, isAdded }: Props) {
               variant={"outline"}
               className="w-full lg:w-auto"
               onClick={() => addToList(book)}
+              id="book-search-result-add-button"
             >
               {isAdded ? (
                 <>

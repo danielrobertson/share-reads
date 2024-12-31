@@ -91,7 +91,11 @@ export default function EditListPage() {
         <StickyHeader>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" className="relative p-2">
+              <Button
+                variant="ghost"
+                className="relative p-2"
+                id="view-book-list-button"
+              >
                 Your list
                 <BookOpen className="h-6 w-6" />
                 {bookList.length > 0 && (
@@ -109,6 +113,7 @@ export default function EditListPage() {
                 <Button
                   onClick={() => copyShareUrl(listId)}
                   className="w-full mb-4"
+                  id="copy-share-link-button"
                 >
                   {isCopied ? (
                     <>
