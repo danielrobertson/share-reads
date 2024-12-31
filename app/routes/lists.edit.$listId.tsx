@@ -86,7 +86,7 @@ export default function EditListPage() {
   }, [isDialogOpen]);
 
   return (
-    <div className="container flex h-screen justify-center">
+    <div className="container px-3 mx-auto flex h-screen justify-center">
       <div className="flex flex-col items-center gap-16 w-full max-w-3xl">
         <StickyHeader>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
