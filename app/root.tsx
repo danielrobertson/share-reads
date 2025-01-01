@@ -1,4 +1,4 @@
-import type { LinksFunction } from "@remix-run/cloudflare";
+import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare";
 import {
   Links,
   Meta,
@@ -9,6 +9,15 @@ import {
 
 import "./tailwind.css";
 import { BooklistProvider } from "~/components/contexts/BooklistContext";
+
+// Import rootAuthLoader
+import { rootAuthLoader } from "@clerk/remix/ssr.server";
+import { ClerkApp } from "@clerk/remix";
+
+// Export as the root route loader
+export const loader: LoaderFunction = (args) => rootAuthLoader(args);
+
+// Import ClerkApp
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -41,6 +50,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
+function App() {
   return <Outlet />;
 }
+
+export default ClerkApp(App);
