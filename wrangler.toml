@@ -23,6 +23,7 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 FAUNA_SECRET = ""
 CLERK_SECRET_KEY = ""
+CLERK_PUBLISHABLE_KEY = ""
 
 # Bind the Workers AI model catalog. Run machine learning models, powered by serverless GPUs, on Cloudflare’s global network
 # Docs: https://developers.cloudflare.com/pages/functions/bindings/#workers-ai
