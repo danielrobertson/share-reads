@@ -93,10 +93,10 @@ export default function EditListPage() {
             <DialogTrigger asChild>
               <Button
                 variant="ghost"
-                className="relative p-2"
+                className="relative mr-2"
                 id="view-book-list-button"
               >
-                <BookOpen className="h-6 w-6" />
+                <BookOpen size={36} />
                 {bookList.length > 0 && (
                   <span className="absolute -top-[4px] -right-[4px] bg-primary text-zinc-50 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
                     {bookList.length}
