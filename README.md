@@ -4,7 +4,7 @@ Quickly create and share lists of books with anyone
 
 🚀 https://sharereads.xyz/
 
-Built using Cloudflare Pages, Cloudflare KV, and MongoDB 
+Built using Remix.js, FaunaDB, Cloudflare Pages, and Google Books API
 
 ![Kapture 2024-12-20 at 16 17 22](https://github.com/user-attachments/assets/e0faef8f-2323-4e06-8c7a-3f5093bc4b5d)
 
