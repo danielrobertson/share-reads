@@ -83,7 +83,9 @@ export default function ListViewPage() {
                     key={book.id}
                     className="flex justify-between items-center"
                   >
-                    <BookResultCard book={book} />
+                    <a href={book.volumeInfo.previewLink} className="w-full">
+                      <BookResultCard book={book} />
+                    </a>
                   </li>
                 ))}
               </ul>
