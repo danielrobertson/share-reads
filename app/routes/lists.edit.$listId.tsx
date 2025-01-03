@@ -20,6 +20,12 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { useBooklist } from "~/components/contexts/BooklistContext";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "~/components/ui/tooltip";
 import { BookList } from "~/types";
 
 export const BOOKS_FORM_KEY = "books";
@@ -91,18 +97,27 @@ export default function EditListPage() {
         <StickyHeader>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button
-                variant="ghost"
-                className="relative mr-2"
-                id="view-book-list-button"
-              >
-                <BookOpen size={36} />
-                {bookList.length > 0 && (
-                  <span className="absolute -top-[4px] -right-[4px] bg-primary text-zinc-50 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
-                    {bookList.length}
-                  </span>
-                )}
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      variant="ghost"
+                      className="relative mr-2"
+                      id="view-book-list-button"
+                    >
+                      <BookOpen size={36} />
+                      {bookList.length > 0 && (
+                        <span className="absolute -top-[4px] -right-[4px] bg-primary text-zinc-50 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
+                          {bookList.length}
+                        </span>
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Your list</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
