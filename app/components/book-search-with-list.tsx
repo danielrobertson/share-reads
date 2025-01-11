@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 import { useFetcher } from "@remix-run/react";
 
 import { Input } from "~/components/ui/input";
@@ -70,6 +70,12 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
     }
   };
 
+  const handleClear = () => {
+    setQuery("");
+    setSearchResults([]);
+    setHasSearched(false);
+  };
+
   return (
     <>
       <div className="flex justify-between items-start mb-5">
@@ -89,14 +95,28 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
         id="book-search-form"
       >
         <div className="flex gap-2">
-          <Input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for books..."
-            className="flex-grow"
-            id="book-search-input"
-          />
+          <div className="relative w-full">
+            <Input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for books..."
+              className="flex-grow"
+              id="book-search-input"
+            />
+            {query && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-[0.2rem] top-1/2 transform -translate-y-1/2 h-8 w-8"
+                onClick={handleClear}
+                aria-label="Clear search"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
           <Button type="submit" disabled={isLoading} id="book-search-button">
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
