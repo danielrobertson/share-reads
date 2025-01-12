@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { MetaFunction, Outlet, redirect } from "@remix-run/react";
+import { MetaFunction, redirect } from "@remix-run/react";
 import { Client, fql } from "fauna";
 
 export const BOOKS_FORM_KEY = "books";
@@ -28,7 +28,3 @@ export const loader = async ({ context }: LoaderFunctionArgs) => {
     throw new Response("Internal Server Error", { status: 500 });
   }
 };
-
-export default function Index() {
-  return <Outlet />;
-}
