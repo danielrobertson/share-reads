@@ -22,8 +22,6 @@ import {
 import { useBooklist } from "~/components/contexts/BooklistContext";
 import { BookList } from "~/types";
 
-export const BOOKS_FORM_KEY = "books";
-
 export const loader = async ({ params, context }: LoaderFunctionArgs) => {
   invariant(params.listId, "Expected params.listId");
 

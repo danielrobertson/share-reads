@@ -2,8 +2,6 @@ import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { MetaFunction, redirect } from "@remix-run/react";
 import { Client, fql } from "fauna";
 
-export const BOOKS_FORM_KEY = "books";
-
 export const meta: MetaFunction = () => {
   return [
     { title: "ShareReads" },
