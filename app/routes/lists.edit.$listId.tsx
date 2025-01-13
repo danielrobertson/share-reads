@@ -21,8 +21,13 @@ import {
 } from "~/components/ui/dialog";
 import { useBooklist } from "~/components/contexts/BooklistContext";
 import { BookList } from "~/types";
+import { getSession } from "~/sessions.server";
 
-export const loader = async ({ params, context }: LoaderFunctionArgs) => {
+export const loader = async ({
+  params,
+  context,
+  request,
+}: LoaderFunctionArgs) => {
   invariant(params.listId, "Expected params.listId");
 
   try {
@@ -36,12 +41,24 @@ export const loader = async ({ params, context }: LoaderFunctionArgs) => {
     `);
 
     const booklist = response.data;
+    console.log(booklist);
 
-    console.log("🚀 ~ loader ~ booklist:", booklist);
+    const session = await getSession(request, context.cloudflare.env);
+
+    // @ts-expect-error session is not typed
+    const sessionToken = session.get(`edit_token_${booklist.id}`);
+
+    if (sessionToken !== booklist.editToken) {
+      throw new Response("Unauthorized", { status: 401 });
+    }
 
     return json({ booklist });
   } catch (error) {
-    console.error("Database error:", error);
+    console.error(error);
+    if (error instanceof Response) {
+      throw error;
+    }
+
     throw new Response("List not found", { status: 404 });
   }
 };

@@ -1,4 +1,3 @@
-import React from "react";
 import { Plus } from "lucide-react";
 import invariant from "tiny-invariant";
 
@@ -44,18 +43,17 @@ export async function loader({ params, context }: LoaderFunctionArgs) {
       list
       `);
 
-    console.log("🚀 ~ loader ~ list:", result);
+    console.log(result);
 
     return json({ booklist: result.data });
   } catch (error) {
-    console.error("Database error:", error);
+    console.error(error);
     return json({ booklist: null }, { status: 500 });
   }
 }
 
 export default function ListViewPage() {
   const { booklist } = useLoaderData<typeof loader>();
-  console.log("🚀 ~ ListViewPage ~ data:", booklist);
 
   return (
     <html lang="en">
