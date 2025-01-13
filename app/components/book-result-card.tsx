@@ -1,4 +1,3 @@
-import React from "react";
 import { BookResult } from "~/types";
 import { Button } from "./ui/button";
 import { Check, Plus } from "lucide-react";
