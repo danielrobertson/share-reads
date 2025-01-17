@@ -108,7 +108,7 @@ export default function EditListPage() {
             <DialogTrigger asChild>
               <Button
                 variant="ghost"
-                className="relative mr-2"
+                className="relative"
                 id="view-book-list-button"
               >
                 <BookOpen size={36} />
