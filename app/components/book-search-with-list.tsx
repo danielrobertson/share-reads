@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, SearchIcon, X, XIcon } from "lucide-react";
 import { useFetcher } from "@remix-run/react";
 
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
+import { FieldGroup, Label } from "~/components/ui/field";
+import {
+  SearchField,
+  SearchFieldClear,
+  SearchFieldInput,
+} from "~/components/ui/searchfield";
+
 import { BookResult } from "~/types";
 import BookResultCard from "./book-result-card";
 import { useBooklist } from "./contexts/BooklistContext";
@@ -96,33 +103,32 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
       >
         <div className="flex gap-2">
           <div className="relative w-full">
-            <Input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search for books..."
-              className="flex-grow"
-              id="book-search-input"
-            />
-            {query && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-[0.2rem] top-1/2 transform -translate-y-1/2 h-8 w-8"
-                onClick={handleClear}
-                aria-label="Clear search"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
+            <SearchField className="">
+              <FieldGroup>
+                <SearchIcon
+                  aria-hidden
+                  className="size-4 text-muted-foreground"
+                />
+                <SearchFieldInput
+                  placeholder="Search for books..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="w-full"
+                  id="book-search-input"
+                />
+                <SearchFieldClear onPress={handleClear}>
+                  <XIcon aria-hidden className="size-4" />
+                </SearchFieldClear>
+              </FieldGroup>
+            </SearchField>
           </div>
-          <Button type="submit" disabled={isLoading} id="book-search-button">
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Search className="h-4 w-4" />
-            )}
+          <Button
+            className="h-10"
+            type="submit"
+            disabled={isLoading}
+            id="book-search-button"
+          >
+            Search
           </Button>
         </div>
       </form>
