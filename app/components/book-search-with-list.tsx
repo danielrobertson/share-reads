@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Loader2, Search, SearchIcon, X, XIcon } from "lucide-react";
+import { SearchIcon, XIcon } from "lucide-react";
 import { useFetcher } from "@remix-run/react";
 
-import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
-import { FieldGroup, Label } from "~/components/ui/field";
+import { FieldGroup } from "~/components/ui/field";
 import {
   SearchField,
   SearchFieldClear,
@@ -86,7 +85,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
   return (
     <>
       <div className="flex justify-between items-start mb-5">
-        <div className="w-full text-center md:text-left">
+        <div className="w-full text-center">
           <h1 className="text-3xl font-bold text-secondary-foreground">
             Quickly create shareable book lists
           </h1>
@@ -98,7 +97,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
           e.preventDefault();
           handleSearch(query);
         }}
-        className="mb-6"
+        className="mb-6 max-w-lg mx-auto"
         id="book-search-form"
       >
         <div className="flex gap-2">
