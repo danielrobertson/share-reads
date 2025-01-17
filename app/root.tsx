@@ -1,6 +1,11 @@
-import { captureRemixErrorBoundaryError } from "@sentry/remix";
 import type { LinksFunction, LoaderFunction } from "@remix-run/cloudflare";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration, useRouteError } from "@remix-run/react";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 
 import "./tailwind.css";
 import { BooklistProvider } from "~/components/contexts/BooklistContext";
@@ -48,11 +53,5 @@ export function Layout({ children }: { children: React.ReactNode }) {
 function App() {
   return <Outlet />;
 }
-
-export const ErrorBoundary = () => {
-  const error = useRouteError();
-  captureRemixErrorBoundaryError(error);
-  return <div>Something went wrong</div>;
-};
 
 export default ClerkApp(App);
