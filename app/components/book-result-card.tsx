@@ -31,17 +31,17 @@ export default function BookResultCard({ book, addToList, isAdded }: Props) {
                 {book.volumeInfo.title}
               </h2>
               {book.volumeInfo.authors && (
-                <p className="text-gray-600 text-center sm:text-left">
+                <p className="text-muted-foreground text-center sm:text-left">
                   {book.volumeInfo.authors.join(", ")}
                 </p>
               )}
               {book.volumeInfo.publishedDate && (
-                <p className="text-gray-500 text-xs text-center sm:text-left">
+                <p className="text-muted-foreground text-xs text-center sm:text-left">
                   Published: {book.volumeInfo.publishedDate}
                 </p>
               )}
               {book.volumeInfo.description && addToList && (
-                <p className="text-xs text-gray-600 mt-2 line-clamp-3 sm:line-clamp-2">
+                <p className="text-xs text-muted-foreground mt-2 line-clamp-3 sm:line-clamp-2">
                   {book.volumeInfo.description}
                 </p>
               )}

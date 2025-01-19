@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import copy from "copy-to-clipboard";
-import { BookOpen, Check, Copy } from "lucide-react";
+import { Book, Check, Copy } from "lucide-react";
 import invariant from "tiny-invariant";
 import { Client, fql } from "fauna";
 
@@ -107,13 +107,13 @@ export default function EditListPage() {
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
               <Button
-                variant="ghost"
-                className="relative"
+                variant="outline"
+                className="relative px-3"
                 id="view-book-list-button"
               >
-                <BookOpen size={36} />
+                <Book size={36} />
                 {bookList.length > 0 && (
-                  <span className="absolute -top-[4px] -right-[4px] bg-primary text-zinc-50 rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-medium">
+                  <span className="absolute -top-[8px] -right-[8px] bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center text-[12px] font-medium">
                     {bookList.length}
                   </span>
                 )}
@@ -154,7 +154,7 @@ export default function EditListPage() {
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-muted-foreground">
                       Your book list is empty. Add some books!
                     </p>
                   )}

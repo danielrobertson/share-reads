@@ -86,7 +86,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
     <>
       <div className="flex justify-between items-start mb-5">
         <div className="w-full text-center">
-          <h1 className="text-3xl font-bold text-secondary-foreground">
+          <h1 className="text-3xl font-bold">
             Quickly create shareable book lists
           </h1>
         </div>
@@ -146,7 +146,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
             }}
           />
           <div className="max-w-md mx-auto p-4 rounded-lg">
-            <p className="text-xs text-gray-600">
+            <p className="text-xs text-muted-foreground">
               Tip: Try searching for your favorite author or book title to get
               started
             </p>
@@ -176,7 +176,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
       )}
 
       {searchResults.length === 0 && hasSearched && !isLoading && (
-        <p className="text-center text-gray-500">
+        <p className="text-center text-xs text-muted-foreground">
           No books found. Try another search term.
         </p>
       )}
