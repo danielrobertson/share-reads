@@ -18,16 +18,10 @@ export const loader = async ({ context, request }: LoaderFunctionArgs) => {
       secret: context.cloudflare.env.FAUNA_SECRET,
     });
 
-    const editToken = crypto.randomUUID();
-
     const result = await client.query<string>(fql`
-      let newList = BookList.create({ books: [], editToken: ${editToken} })
+      let newList = BookList.create({ books: [] })
       newList.id
     `);
-
-    // light weight edit auth until we have a user
-    // @ts-expect-error session is not typed
-    session.set(`edit_token_${result.data}`, editToken);
 
     return redirect(`/lists/edit/${result.data}`, {
       headers: {
