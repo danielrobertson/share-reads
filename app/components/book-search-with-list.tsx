@@ -14,9 +14,9 @@ import { BookResult } from "~/types";
 import BookResultCard from "./book-result-card";
 import { useBooklist } from "./contexts/BooklistContext";
 
-export function BookSearchWithListComponent({ listId }: { listId: string }) {
+export function BookSearchWithListComponent() {
   const { bookList, setBookList } = useBooklist();
-  const addToListFetcher = useFetcher();
+  const fetcher = useFetcher();
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<BookResult[]>([]);
 
@@ -63,13 +63,14 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
     if (!bookList.some((item) => item.id === book.id)) {
       setBookList((prevList) => [...prevList, book]);
 
-      addToListFetcher.submit(
-        { book: JSON.stringify(book) },
-        {
-          method: "PUT",
-          action: `/lists/${listId}/book`,
-        }
-      );
+      alert("TODO add to list");
+      // fetcher.submit(
+      //   { book: JSON.stringify(book) },
+      //   {
+      //     method: "PUT",
+      //     action: `/lists/${listId}/book`,
+      //   }
+      // );
     } else {
       setBookList((prevList) => prevList.filter((item) => item.id !== book.id));
       // TODO: remove from list
@@ -83,7 +84,7 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
   };
 
   return (
-    <>
+    <div className="h-full">
       <div className="flex justify-between items-start mb-5">
         <div className="w-full text-center">
           <h1 className="text-3xl font-bold">
@@ -180,6 +181,6 @@ export function BookSearchWithListComponent({ listId }: { listId: string }) {
           No books found. Try another search term.
         </p>
       )}
-    </>
+    </div>
   );
 }
