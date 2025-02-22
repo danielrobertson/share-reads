@@ -13,6 +13,7 @@ import { BooklistProvider } from "~/components/contexts/BooklistContext";
 // Import rootAuthLoader
 import { rootAuthLoader } from "@clerk/remix/ssr.server";
 import { ClerkApp } from "@clerk/remix";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Export as the root route loader
 export const loader: LoaderFunction = (args) => rootAuthLoader(args);
@@ -31,6 +32,7 @@ export const links: LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
+const queryClient = new QueryClient();
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -42,7 +44,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <BooklistProvider>{children}</BooklistProvider>
+        <QueryClientProvider client={queryClient}>
+          <BooklistProvider>{children}</BooklistProvider>
+        </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
