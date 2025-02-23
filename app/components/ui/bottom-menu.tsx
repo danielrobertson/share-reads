@@ -99,7 +99,7 @@ export function MenuBar({ items, className, ...props }: MenuBarProps) {
           >
             <div className="flex justify-center items-center">
               <div className="w-[18px] h-[18px] flex justify-center items-center overflow-hidden">
-                <item.icon className="w-full h-full" />
+                <item.icon className="w-full h-full" aria-hidden />
               </div>
             </div>
             <span className="sr-only">{item.label}</span>

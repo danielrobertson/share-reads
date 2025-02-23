@@ -99,6 +99,7 @@ function JollySearchField({
         cn("group flex flex-col gap-2", className)
       )}
       {...props}
+      aria-label="Search"
     >
       <Label>{label}</Label>
       <FieldGroup>

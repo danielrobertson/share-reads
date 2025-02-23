@@ -1,36 +1,8 @@
-import { useEffect, useState } from "react";
-import copy from "copy-to-clipboard";
-import {
-  Book,
-  Check,
-  Copy,
-  LibraryBig,
-  Search,
-  Share,
-  User,
-} from "lucide-react";
-import invariant from "tiny-invariant";
-import { Client, fql } from "fauna";
-
-import type { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
-import { json } from "@remix-run/node";
+import { LibraryBig, Search, User } from "lucide-react";
+import { MetaFunction } from "@remix-run/react";
 
 import { StickyHeader } from "~/components/sticky-header";
-import { BookSearchWithListComponent } from "~/components/book-search-with-list";
-import BookResultCard from "~/components/book-result-card";
-import { Button } from "~/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
-
-import { useBooklist } from "~/components/contexts/BooklistContext";
-import { BookList } from "~/types";
-import { getSession } from "~/sessions.server";
+import { BookSearch } from "~/components/book-search";
 import { MenuBar } from "~/components/ui/bottom-menu";
 
 export const meta: MetaFunction = () => {
@@ -45,14 +17,17 @@ function SearchPageBottomNav() {
           {
             icon: () => <Search />,
             label: "Search",
+            href: "/search",
           },
           {
             icon: () => <LibraryBig />,
             label: "Your lists",
+            href: "/lists",
           },
           {
             icon: () => <User />,
             label: "Profile",
+            href: "/profile",
           },
         ]}
       />
@@ -61,45 +36,15 @@ function SearchPageBottomNav() {
 }
 
 export default function SearchPage() {
-  const { bookList } = useBooklist();
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
-
-  const copyShareUrl = async (id: string) => {
-    const url = `${window.location.origin}/lists/view/${id}`;
-
-    try {
-      // mobile browsers prefer to use the share api
-      if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        await navigator.share({
-          url,
-        });
-      } else {
-        // desktop browsers
-        copy(url);
-      }
-    } catch (err) {
-      // User canceled or share failed
-      console.error("Share failed");
-    } finally {
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 5000);
-    }
-  };
-
-  useEffect(() => {
-    if (!isDialogOpen) {
-      setIsCopied(false);
-    }
-  }, [isDialogOpen]);
-
   return (
     <div className="container px-3 mx-auto flex h-screen justify-center">
       <div className="flex flex-col items-center gap-16 w-full h-full max-w-3xl">
         <StickyHeader />
         <main className="max-w-3xl">
-          <BookSearchWithListComponent />
+          <h1 className="text-3xl font-bold text-center ">
+            Quickly create shareable book lists
+          </h1>
+          <BookSearch />
         </main>
       </div>
       <SearchPageBottomNav />
