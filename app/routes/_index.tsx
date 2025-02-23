@@ -1,4 +1,5 @@
 import { MetaFunction } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
   return [
@@ -7,4 +8,6 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = async () => {};
+export const loader = async () => {
+  return redirect("/search");
+};
