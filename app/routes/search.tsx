@@ -33,6 +33,10 @@ import { BookList } from "~/types";
 import { getSession } from "~/sessions.server";
 import { MenuBar } from "~/components/ui/bottom-menu";
 
+export const meta: MetaFunction = () => {
+  return [{ title: "Booklist | Search" }];
+};
+
 function SearchPageBottomNav() {
   return (
     <div className="flex items-center justify-center fixed bottom-0 left-0 right-0 p-6">
