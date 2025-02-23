@@ -1,42 +1,50 @@
-import * as React from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { cn } from "~/lib/utils"
+import * as React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "~/lib/utils";
+import { Link } from "@remix-run/react";
 
 export interface MenuBarItem {
-  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
-  label: string
+  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+  label: string;
+  href: string;
 }
 
 interface MenuBarProps extends React.HTMLAttributes<HTMLDivElement> {
-  items: MenuBarItem[]
+  items: MenuBarItem[];
 }
 
 const springConfig = {
   duration: 0.3,
-  ease: "easeInOut"
-}
+  ease: "easeInOut",
+};
 
 export function MenuBar({ items, className, ...props }: MenuBarProps) {
-  const [activeIndex, setActiveIndex] = React.useState<number | null>(null)
-  const menuRef = React.useRef<HTMLDivElement>(null)
-  const [tooltipPosition, setTooltipPosition] = React.useState({ left: 0, width: 0 })
-  const tooltipRef = React.useRef<HTMLDivElement>(null)
+  const [activeIndex, setActiveIndex] = React.useState<number | null>(null);
+  const menuRef = React.useRef<HTMLDivElement>(null);
+  const [tooltipPosition, setTooltipPosition] = React.useState({
+    left: 0,
+    width: 0,
+  });
+  const tooltipRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (activeIndex !== null && menuRef.current && tooltipRef.current) {
-      const menuItem = menuRef.current.children[activeIndex] as HTMLElement
-      const menuRect = menuRef.current.getBoundingClientRect()
-      const itemRect = menuItem.getBoundingClientRect()
-      const tooltipRect = tooltipRef.current.getBoundingClientRect()
-    
-      const left = itemRect.left - menuRect.left + (itemRect.width - tooltipRect.width) / 2
-    
+      const menuItem = menuRef.current.children[activeIndex] as HTMLElement;
+      const menuRect = menuRef.current.getBoundingClientRect();
+      const itemRect = menuItem.getBoundingClientRect();
+      const tooltipRect = tooltipRef.current.getBoundingClientRect();
+
+      const left =
+        itemRect.left -
+        menuRect.left +
+        (itemRect.width - tooltipRect.width) / 2;
+
       setTooltipPosition({
         left: Math.max(0, Math.min(left, menuRect.width - tooltipRect.width)),
-        width: tooltipRect.width
-      })
+        width: tooltipRect.width,
+      });
     }
-  }, [activeIndex])
+  }, [activeIndex]);
 
   return (
     <div className={cn("relative", className)} {...props}>
@@ -70,8 +78,8 @@ export function MenuBar({ items, className, ...props }: MenuBarProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      
-      <div 
+
+      <nav
         ref={menuRef}
         className={cn(
           "h-10 px-1.5 inline-flex justify-center items-center gap-[3px] overflow-hidden z-10",
@@ -82,8 +90,9 @@ export function MenuBar({ items, className, ...props }: MenuBarProps) {
         )}
       >
         {items.map((item, index) => (
-          <button 
+          <Link
             key={index}
+            to={item.href}
             className="w-8 h-8 px-3 py-1 rounded-full flex justify-center items-center gap-2 hover:bg-muted/80 transition-colors"
             onMouseEnter={() => setActiveIndex(index)}
             onMouseLeave={() => setActiveIndex(null)}
@@ -94,9 +103,9 @@ export function MenuBar({ items, className, ...props }: MenuBarProps) {
               </div>
             </div>
             <span className="sr-only">{item.label}</span>
-          </button>
+          </Link>
         ))}
-      </div>
+      </nav>
     </div>
-  )
+  );
 }
