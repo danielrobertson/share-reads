@@ -6,7 +6,7 @@ import { BookSearch } from "~/components/book-search";
 import { MenuBar } from "~/components/ui/bottom-menu";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Booklist | Search" }];
+  return [{ title: "ShareReads | Search" }];
 };
 
 function SearchPageBottomNav() {
