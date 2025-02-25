@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Plus, SearchIcon, XIcon } from "lucide-react";
+import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 
 import { Button } from "~/components/ui/button";
 import { FieldGroup } from "~/components/ui/field";
@@ -26,7 +27,6 @@ export function BookSearch() {
   const [value, setValue] = useState("");
 
   const { data: searchResults, isLoading } = useGoogleBooks({ query });
-  console.log("🚀 ~ BookSearch ~ searchResults:", searchResults);
 
   const [emptyUrl, setEmptyUrl] = useState("/travolta.gif");
 

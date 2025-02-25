@@ -1,5 +1,7 @@
 import { LibraryBig, Search, User } from "lucide-react";
-import { MetaFunction } from "@remix-run/react";
+import { MetaFunction, useLoaderData } from "@remix-run/react";
+import { getAuth } from "@clerk/remix/ssr.server";
+import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 
 import { StickyHeader } from "~/components/sticky-header";
 import { BookSearch } from "~/components/book-search";
@@ -7,6 +9,12 @@ import { MenuBar } from "~/components/ui/bottom-menu";
 
 export const meta: MetaFunction = () => {
   return [{ title: "ShareReads | Search" }];
+};
+
+export const loader = async (args: LoaderFunctionArgs) => {
+  const { userId } = await getAuth(args);
+
+  return { userId };
 };
 
 function SearchPageBottomNav() {
@@ -36,6 +44,9 @@ function SearchPageBottomNav() {
 }
 
 export default function SearchPage() {
+  const { userId } = useLoaderData<typeof loader>();
+  console.log("🚀 ~ SearchPage ~ userId:", userId);
+
   return (
     <div className="container px-3 mx-auto flex h-screen justify-center">
       <div className="flex flex-col items-center gap-16 w-full h-full max-w-3xl">
