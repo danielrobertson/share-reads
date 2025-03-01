@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, SearchIcon, XIcon } from "lucide-react";
-import { SignedOut, SignInButton, UserButton, SignedIn } from "@clerk/remix";
+import { SignedOut, SignInButton, SignedIn } from "@clerk/remix";
 import { Form, useSearchParams } from "@remix-run/react";
 
 import { Button } from "~/components/ui/button";
@@ -14,27 +14,41 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
+  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "~/components/ui/drawer";
-
 import { useGoogleBooks } from "~/hooks/useGoogleBooks";
 import BookResultCard from "./book-result-card";
+import { BookResult } from "~/types";
+
+const BOOK_PARAM = "book";
+const QUERY_PARAM = "q";
 
 export function BookSearch() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.get("q") || "";
+  const query = searchParams.get(QUERY_PARAM) || "";
 
   const [searchValue, setSearchValue] = useState(query);
   const [inputValue, setInputValue] = useState(query);
+  const [emptyUrl, setEmptyUrl] = useState("/travolta.gif");
+  const [selectedBook, setSelectedBook] = useState<BookResult | null>(null);
 
   const { data: searchResults, isLoading } = useGoogleBooks({
     query: searchValue,
   });
 
-  const [emptyUrl, setEmptyUrl] = useState("/travolta.gif");
+  useEffect(() => {
+    // maintain the selected book in the URL for sign-in redirect_url during add-to-list user flow
+    if (selectedBook) {
+      setSearchParams((prev) => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set(BOOK_PARAM, selectedBook.id);
+        return newParams;
+      });
+    }
+  }, [selectedBook, searchParams, setSearchParams]);
 
   return (
     <>
@@ -123,46 +137,12 @@ export function BookSearch() {
                   className="flex justify-between items-center"
                   id="book-search-result"
                 >
-                  <Drawer>
-                    <DrawerTrigger className="w-full text-left">
-                      <BookResultCard book={book} />
-                    </DrawerTrigger>
-
-                    <DrawerContent>
-                      <div className="mx-auto w-full max-w-sm">
-                        <DrawerHeader>
-                          <DrawerTitle>Add to list</DrawerTitle>
-                        </DrawerHeader>
-                        <div className="p-4 pb-0">
-                          <div className="flex flex-col space-x-2">
-                            <Button variant="secondary" size="default">
-                              <Plus />
-                              Create list
-                            </Button>
-                          </div>
-                          <div className="mt-3 h-[120px]">
-                            <p className="text-xs text-muted-foreground mt-5">
-                              <SignedIn>
-                                No lists found
-                                <UserButton />
-                              </SignedIn>
-                              <SignedOut>
-                                <SignInButton>
-                                  <button className="underline">Sign in</button>
-                                </SignInButton>{" "}
-                                to view your lists
-                              </SignedOut>
-                            </p>
-                          </div>
-                        </div>
-                        <DrawerFooter>
-                          <DrawerClose asChild>
-                            <Button variant="outline">Cancel</Button>
-                          </DrawerClose>
-                        </DrawerFooter>
-                      </div>
-                    </DrawerContent>
-                  </Drawer>
+                  <button
+                    className="w-full text-left"
+                    onClick={() => setSelectedBook(book)}
+                  >
+                    <BookResultCard book={book} />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -177,6 +157,69 @@ export function BookSearch() {
               No books found. Try another search term.
             </p>
           )}
+
+        <Drawer
+          open={!!selectedBook}
+          onClose={() => {
+            setSelectedBook(null);
+            setSearchParams((prev) => {
+              const newParams = new URLSearchParams(prev);
+              newParams.delete(BOOK_PARAM);
+              return newParams;
+            });
+          }}
+        >
+          <DrawerContent>
+            <div className="mx-auto w-full max-w-sm">
+              <DrawerHeader>
+                <DrawerTitle>Add to list</DrawerTitle>
+                <DrawerDescription>
+                  <div className="mt-2 flex items-center gap-2">
+                    <img
+                      src={selectedBook?.volumeInfo.imageLinks?.thumbnail}
+                      alt={selectedBook?.volumeInfo.title}
+                      className="h-16 rounded-md"
+                    />
+                    <div className="flex flex-col">
+                      <p className="text-sm font-medium">
+                        {selectedBook?.volumeInfo.title}
+                      </p>
+                      <p className="text-left text-xs text-muted-foreground">
+                        {selectedBook?.volumeInfo.authors?.join(", ")}
+                      </p>
+                    </div>
+                  </div>
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="p-4 pb-0">
+                <div className="flex flex-col space-x-2">
+                  <Button variant="secondary" size="default">
+                    <Plus />
+                    Create list
+                  </Button>
+                </div>
+                <div className="mt-3 h-[120px]">
+                  <p className="text-xs text-muted-foreground mt-5">
+                    <SignedIn>No lists found</SignedIn>
+                    <SignedOut>
+                      <SignInButton
+                        signUpForceRedirectUrl={`/search?${searchParams.toString()}`}
+                      >
+                        <button className="underline">Sign in</button>
+                      </SignInButton>{" "}
+                      to view your lists
+                    </SignedOut>
+                  </p>
+                </div>
+              </div>
+              <DrawerFooter>
+                <DrawerClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </div>
+          </DrawerContent>
+        </Drawer>
       </div>
     </>
   );
