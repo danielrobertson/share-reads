@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Plus, SearchIcon, XIcon } from "lucide-react";
-import { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { SignedOut, SignInButton, UserButton, SignedIn } from "@clerk/remix";
+import { Form, useSearchParams } from "@remix-run/react";
 
 import { Button } from "~/components/ui/button";
 import { FieldGroup } from "~/components/ui/field";
@@ -23,20 +24,31 @@ import { useGoogleBooks } from "~/hooks/useGoogleBooks";
 import BookResultCard from "./book-result-card";
 
 export function BookSearch() {
-  const [query, setQuery] = useState("");
-  const [value, setValue] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get("q") || "";
 
-  const { data: searchResults, isLoading } = useGoogleBooks({ query });
+  const [searchValue, setSearchValue] = useState(query);
+  const [inputValue, setInputValue] = useState(query);
+
+  const { data: searchResults, isLoading } = useGoogleBooks({
+    query: searchValue,
+  });
 
   const [emptyUrl, setEmptyUrl] = useState("/travolta.gif");
 
   return (
     <>
       <div className="h-full mt-4">
-        <form
+        <Form
           onSubmit={(e) => {
             e.preventDefault();
-            setQuery(value);
+            setSearchValue(inputValue);
+
+            setSearchParams((prev) => {
+              const newParams = new URLSearchParams(prev);
+              newParams.set("q", inputValue);
+              return newParams;
+            });
           }}
           className="mb-6 max-w-lg mx-auto"
           id="book-search-form"
@@ -51,15 +63,16 @@ export function BookSearch() {
                   />
                   <SearchFieldInput
                     placeholder="Search for books..."
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => setInputValue(e.target.value)}
                     className="w-full"
                     id="book-search-input"
                     aria-label="Search"
+                    value={inputValue}
                   />
                   <SearchFieldClear
                     onPress={() => {
-                      setQuery("");
-                      setValue("");
+                      setSearchValue("");
+                      setInputValue("");
                     }}
                   >
                     <XIcon aria-hidden className="size-4" />
@@ -76,7 +89,7 @@ export function BookSearch() {
               Search
             </Button>
           </div>
-        </form>
+        </Form>
 
         {!searchResults && !isLoading && (
           <div className="text-center py-4" id="book-search-empty-state">
@@ -121,7 +134,7 @@ export function BookSearch() {
                           <DrawerTitle>Add to list</DrawerTitle>
                         </DrawerHeader>
                         <div className="p-4 pb-0">
-                          <div className="flex flex-col  space-x-2">
+                          <div className="flex flex-col space-x-2">
                             <Button variant="secondary" size="default">
                               <Plus />
                               Create list
@@ -129,7 +142,16 @@ export function BookSearch() {
                           </div>
                           <div className="mt-3 h-[120px]">
                             <p className="text-xs text-muted-foreground mt-5">
-                              No lists found
+                              <SignedIn>
+                                No lists found
+                                <UserButton />
+                              </SignedIn>
+                              <SignedOut>
+                                <SignInButton>
+                                  <button className="underline">Sign in</button>
+                                </SignInButton>{" "}
+                                to view your lists
+                              </SignedOut>
                             </p>
                           </div>
                         </div>
@@ -147,7 +169,7 @@ export function BookSearch() {
           </>
         )}
 
-        {query &&
+        {searchValue &&
           searchResults &&
           searchResults?.totalItems === 0 &&
           !isLoading && (
