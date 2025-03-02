@@ -21,10 +21,8 @@ import {
 } from "~/components/ui/drawer";
 import { useGoogleBooks } from "~/hooks/useGoogleBooks";
 import BookResultCard from "./book-result-card";
-import { BookResult } from "~/types";
-
-const BOOK_PARAM = "book";
-const QUERY_PARAM = "q";
+import { BOOK_PARAM, QUERY_PARAM } from "~/constants";
+import { useSelectedSearchedBook } from "~/hooks/useSelectedSearchedBook";
 
 export function BookSearch() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,26 +36,11 @@ export function BookSearch() {
     query: searchValue,
   });
 
-  // maintain the selected book URL param for sign-in redirect_url during add-to-list user flow
-  const [selectedBook, setSelectedBook] = useState<BookResult | null>();
-
-  useEffect(() => {
-    const bookId = searchParams.get(BOOK_PARAM);
-    if (bookId) {
-      const book = searchResults?.items?.find((item) => item.id === bookId);
-      setSelectedBook(book || null);
-    }
-  }, [searchParams, searchResults]);
-
-  useEffect(() => {
-    if (selectedBook) {
-      setSearchParams((prev) => {
-        const newParams = new URLSearchParams(prev);
-        newParams.set(BOOK_PARAM, selectedBook.id);
-        return newParams;
-      });
-    }
-  }, [selectedBook, searchParams, setSearchParams]);
+  // need to maintain selected book state for sign-in redirect_url during add-to-list user flow
+  const { selectedBook, setSelectedBook, clearSelectedBook } =
+    useSelectedSearchedBook({
+      searchResults,
+    });
 
   return (
     <>
@@ -69,7 +52,7 @@ export function BookSearch() {
 
             setSearchParams((prev) => {
               const newParams = new URLSearchParams(prev);
-              newParams.set("q", inputValue);
+              newParams.set(QUERY_PARAM, inputValue);
               return newParams;
             });
           }}
@@ -78,7 +61,7 @@ export function BookSearch() {
         >
           <div className="flex gap-2">
             <div className="relative w-full">
-              <SearchField className="">
+              <SearchField>
                 <FieldGroup>
                   <SearchIcon
                     aria-hidden
@@ -93,6 +76,9 @@ export function BookSearch() {
                     value={inputValue}
                   />
                   <SearchFieldClear
+                    style={{
+                      visibility: inputValue.length > 0 ? "visible" : "hidden",
+                    }}
                     onPress={() => {
                       setSearchValue("");
                       setInputValue("");
@@ -176,12 +162,7 @@ export function BookSearch() {
         <Drawer
           open={!!selectedBook}
           onClose={() => {
-            setSelectedBook(null);
-            setSearchParams((prev) => {
-              const newParams = new URLSearchParams(prev);
-              newParams.delete(BOOK_PARAM);
-              return newParams;
-            });
+            clearSelectedBook();
           }}
         >
           <DrawerContent>
