@@ -33,14 +33,23 @@ export function BookSearch() {
   const [searchValue, setSearchValue] = useState(query);
   const [inputValue, setInputValue] = useState(query);
   const [emptyUrl, setEmptyUrl] = useState("/travolta.gif");
-  const [selectedBook, setSelectedBook] = useState<BookResult | null>(null);
 
   const { data: searchResults, isLoading } = useGoogleBooks({
     query: searchValue,
   });
 
+  // maintain the selected book URL param for sign-in redirect_url during add-to-list user flow
+  const [selectedBook, setSelectedBook] = useState<BookResult | null>();
+
   useEffect(() => {
-    // maintain the selected book in the URL for sign-in redirect_url during add-to-list user flow
+    const bookId = searchParams.get(BOOK_PARAM);
+    if (bookId) {
+      const book = searchResults?.items?.find((item) => item.id === bookId);
+      setSelectedBook(book || null);
+    }
+  }, [searchParams, searchResults]);
+
+  useEffect(() => {
     if (selectedBook) {
       setSearchParams((prev) => {
         const newParams = new URLSearchParams(prev);
@@ -87,6 +96,12 @@ export function BookSearch() {
                     onPress={() => {
                       setSearchValue("");
                       setInputValue("");
+                      setSearchParams((prev) => {
+                        const newParams = new URLSearchParams(prev);
+                        newParams.delete(BOOK_PARAM);
+                        newParams.delete(QUERY_PARAM);
+                        return newParams;
+                      });
                     }}
                   >
                     <XIcon aria-hidden className="size-4" />
