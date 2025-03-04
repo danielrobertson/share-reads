@@ -1,16 +1,8 @@
-import {
-  LibraryBig,
-  Search,
-  User,
-  Plus,
-  SearchIcon,
-  XIcon,
-} from "lucide-react";
+import { LibraryBig, Search, User, SearchIcon, XIcon } from "lucide-react";
 import {
   MetaFunction,
   useLoaderData,
   Form,
-  useFetcher,
   useSearchParams,
 } from "@remix-run/react";
 import { getAuth } from "@clerk/remix/ssr.server";
@@ -19,7 +11,7 @@ import { useState } from "react";
 import { SignedOut, SignInButton, SignedIn } from "@clerk/remix";
 
 import { Button } from "~/components/ui/button";
-import { FieldGroup, Label } from "~/components/ui/field";
+import { FieldGroup } from "~/components/ui/field";
 import {
   SearchField,
   SearchFieldClear,
@@ -34,22 +26,14 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "~/components/ui/drawer";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog";
+
 import { useGoogleBooks } from "~/hooks/useGoogleBooks";
 import { BOOK_PARAM, QUERY_PARAM } from "~/constants";
 import { useSelectedSearchedBook } from "~/hooks/useSelectedSearchedBook";
-import { Input } from "~/components/ui/input";
 import { StickyHeader } from "~/components/sticky-header";
 import { MenuBar } from "~/components/ui/bottom-menu";
 import BookResultCard from "~/components/book-result-card";
+import CreateListButton from "~/components/CreateListButton";
 
 export const meta: MetaFunction = () => {
   return [{ title: "ShareReads | Search" }];
@@ -91,7 +75,6 @@ export default function SearchPage() {
   const { userId } = useLoaderData<typeof loader>();
   console.log("🚀 ~ SearchPage ~ userId:", userId);
 
-  const fetcher = useFetcher();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get(QUERY_PARAM) || "";
 
@@ -264,50 +247,10 @@ export default function SearchPage() {
                         </div>
                       </DrawerDescription>
                     </DrawerHeader>
+
                     <div className="p-4 pb-0">
                       <div className="flex flex-col space-x-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="secondary" size="default">
-                              <Plus />
-                              Create list
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="sm:max-w-[425px]">
-                            <DialogHeader>
-                              <DialogTitle>Create list</DialogTitle>
-                              <DialogDescription>
-                                Enter a name for your book list to get started.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <Form
-                              action="/list"
-                              method="post"
-                              onSubmit={(e) => {
-                                e.preventDefault();
-                                console.log("create list");
-                              }}
-                            >
-                              <div className="grid gap-4 py-4">
-                                <div className="grid grid-cols-4 items-center gap-4">
-                                  <Label htmlFor="name" className="text-right">
-                                    List name
-                                  </Label>
-                                  <Input
-                                    id="listName"
-                                    name="listName"
-                                    placeholder="My favorites"
-                                    className="col-span-3"
-                                    autoComplete="off"
-                                  />
-                                </div>
-                              </div>
-                              <DialogFooter>
-                                <Button type="submit">Create</Button>
-                              </DialogFooter>
-                            </Form>
-                          </DialogContent>
-                        </Dialog>
+                        <CreateListButton />
                       </div>
                       <div className="mt-3 h-[120px]">
                         <p className="text-xs text-muted-foreground mt-5">
