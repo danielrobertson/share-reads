@@ -9,6 +9,7 @@ import { getAuth } from "@clerk/remix/ssr.server";
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { useState } from "react";
 import { SignedOut, SignInButton, SignedIn } from "@clerk/remix";
+import { Client, fql } from "fauna";
 
 import { Button } from "~/components/ui/button";
 import { FieldGroup } from "~/components/ui/field";
@@ -41,8 +42,22 @@ export const meta: MetaFunction = () => {
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const { userId } = await getAuth(args);
+  const { context } = args;
 
-  return { userId };
+  if (userId) {
+    const client = new Client({
+      secret: context.cloudflare.env.FAUNA_SECRET,
+    });
+
+    const lists = await client.query<string>(fql`
+      const lists = BookList.where(.userId == ${userId})
+      return lists
+      `);
+
+    return { lists };
+  }
+
+  return { lists: [] };
 };
 
 function SearchPageBottomNav() {
@@ -92,6 +107,12 @@ export default function SearchPage() {
       searchResults,
     });
 
+  const signUpForceRedirectUrl = `/search?${searchParams.toString()}`;
+
+  console.log(
+    "🚀 ~ SearchPage ~ signUpForceRedirectUrl:",
+    signUpForceRedirectUrl
+  );
   return (
     <div className="container px-3 mx-auto flex h-screen justify-center">
       <div className="flex flex-col items-center gap-16 w-full h-full max-w-3xl">
@@ -237,7 +258,7 @@ export default function SearchPage() {
                             className="h-16 rounded-md"
                           />
                           <div className="flex flex-col">
-                            <p className="text-sm font-medium">
+                            <p className="text-sm font-medium text-left">
                               {selectedBook?.volumeInfo.title}
                             </p>
                             <p className="text-left text-xs text-muted-foreground">
@@ -253,17 +274,17 @@ export default function SearchPage() {
                         <CreateListButton />
                       </div>
                       <div className="mt-3 h-[120px]">
-                        <p className="text-xs text-muted-foreground mt-5">
+                        <div className="text-xs text-muted-foreground mt-5">
                           <SignedIn>No lists found</SignedIn>
                           <SignedOut>
                             <SignInButton
-                              signUpForceRedirectUrl={`/search?${searchParams.toString()}`}
+                              signUpForceRedirectUrl={signUpForceRedirectUrl}
                             >
                               <button className="underline">Sign in</button>
                             </SignInButton>{" "}
                             to view your lists
                           </SignedOut>
-                        </p>
+                        </div>
                       </div>
                     </div>
                     <DrawerFooter>

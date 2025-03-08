@@ -13,6 +13,8 @@ import { useFetcher } from "@remix-run/react";
 import { Label } from "./ui/field";
 import { Input } from "./ui/input";
 
+export const LIST_NAME_FORM_FIELD = "listName";
+
 export default function CreateListButton() {
   const fetcher = useFetcher();
 
@@ -39,8 +41,8 @@ export default function CreateListButton() {
                 List name
               </Label>
               <Input
-                id="listName"
-                name="listName"
+                id={LIST_NAME_FORM_FIELD}
+                name={LIST_NAME_FORM_FIELD}
                 placeholder="My favorites"
                 className="col-span-3"
                 autoComplete="off"
