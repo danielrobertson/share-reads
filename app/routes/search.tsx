@@ -35,6 +35,7 @@ import { StickyHeader } from "~/components/sticky-header";
 import { MenuBar } from "~/components/ui/bottom-menu";
 import BookResultCard from "~/components/book-result-card";
 import CreateListButton from "~/components/CreateListButton";
+import { BookList } from "~/types";
 
 export const meta: MetaFunction = () => {
   return [{ title: "ShareReads | Search" }];
@@ -45,19 +46,27 @@ export const loader = async (args: LoaderFunctionArgs) => {
   const { context } = args;
 
   if (userId) {
-    const client = new Client({
-      secret: context.cloudflare.env.FAUNA_SECRET,
-    });
+    console.log("🚀 ~ loader ~ userId:", userId);
+    try {
+      const client = new Client({
+        secret: context.cloudflare.env.FAUNA_SECRET,
+      });
 
-    const lists = await client.query<string>(fql`
-      const lists = BookList.where(.userId == ${userId})
-      return lists
+      // getBookListsByUserId is a custom function defined Fauna dashboard
+      const lists = await client.query<{ data: BookList[] }>(fql`
+        BookList.where(.userId == ${userId})
       `);
 
-    return { lists };
+      console.log("🚀 ~ loader ~ lists:", lists);
+
+      return { lists };
+    } catch (error) {
+      console.error(error);
+      return { lists: [], userId };
+    }
   }
 
-  return { lists: [] };
+  return { lists: [], userId: null };
 };
 
 function SearchPageBottomNav() {
