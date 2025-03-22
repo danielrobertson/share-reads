@@ -20,10 +20,21 @@ export interface BookResult {
 export type BookList = {
   [key: string]: QueryValue;
   id: string;
+  name: string;
   books: BookResult[];
+  userId: string;
 };
 
 export type GoogleBooksSearchResponse = {
   items?: BookResult[];
   totalItems: number;
 };
+
+/**
+ * Fauna DB types
+ */
+
+export interface Page<T> {
+  data: T[];
+  after?: string; // cursor for next page
+}

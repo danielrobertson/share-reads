@@ -1,15 +1,23 @@
-import { LibraryBig, Search, User, SearchIcon, XIcon } from "lucide-react";
+import { useState } from "react";
+import {
+  LibraryBig,
+  Search,
+  User,
+  SearchIcon,
+  XIcon,
+  PlusCircleIcon,
+} from "lucide-react";
+import { Client, fql, type QuerySuccess } from "fauna";
 import {
   MetaFunction,
   useLoaderData,
   Form,
   useSearchParams,
+  useFetcher,
 } from "@remix-run/react";
 import { getAuth } from "@clerk/remix/ssr.server";
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useState } from "react";
 import { SignedOut, SignInButton, SignedIn } from "@clerk/remix";
-import { Client, fql } from "fauna";
 
 import { Button } from "~/components/ui/button";
 import { FieldGroup } from "~/components/ui/field";
@@ -27,14 +35,13 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "~/components/ui/drawer";
-
-import { useGoogleBooks } from "~/hooks/useGoogleBooks";
-import { BOOK_PARAM, QUERY_PARAM } from "~/constants";
-import { useSelectedSearchedBook } from "~/hooks/useSelectedSearchedBook";
 import { StickyHeader } from "~/components/sticky-header";
 import { MenuBar } from "~/components/ui/bottom-menu";
 import BookResultCard from "~/components/book-result-card";
 import CreateListButton from "~/components/CreateListButton";
+import { useGoogleBooks } from "~/hooks/useGoogleBooks";
+import { useSelectedSearchedBook } from "~/hooks/useSelectedSearchedBook";
+import { BOOK_PARAM, ITEMS_PER_PAGE, QUERY_PARAM } from "~/constants";
 import { BookList } from "~/types";
 
 export const meta: MetaFunction = () => {
@@ -46,27 +53,28 @@ export const loader = async (args: LoaderFunctionArgs) => {
   const { context } = args;
 
   if (userId) {
-    console.log("🚀 ~ loader ~ userId:", userId);
     try {
       const client = new Client({
         secret: context.cloudflare.env.FAUNA_SECRET,
       });
 
-      // getBookListsByUserId is a custom function defined Fauna dashboard
-      const lists = await client.query<{ data: BookList[] }>(fql`
-        BookList.where(.userId == ${userId})
+      interface Page {
+        data: BookList[];
+        after?: string;
+      }
+
+      const result = await client.query<QuerySuccess<Page>>(fql`
+        BookList.where(.userId == ${userId}).pageSize(${ITEMS_PER_PAGE})
       `);
 
-      console.log("🚀 ~ loader ~ lists:", lists);
-
-      return { lists };
+      return { lists: result.data, userId };
     } catch (error) {
       console.error(error);
-      return { lists: [], userId };
+      return { userId }; // TODO: ux for error state
     }
   }
 
-  return { lists: [], userId: null };
+  return {};
 };
 
 function SearchPageBottomNav() {
@@ -96,8 +104,7 @@ function SearchPageBottomNav() {
 }
 
 export default function SearchPage() {
-  const { userId } = useLoaderData<typeof loader>();
-  console.log("🚀 ~ SearchPage ~ userId:", userId);
+  const { lists } = useLoaderData<typeof loader>();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get(QUERY_PARAM) || "";
@@ -116,12 +123,10 @@ export default function SearchPage() {
       searchResults,
     });
 
+  const fetcher = useFetcher();
+
   const signUpForceRedirectUrl = `/search?${searchParams.toString()}`;
 
-  console.log(
-    "🚀 ~ SearchPage ~ signUpForceRedirectUrl:",
-    signUpForceRedirectUrl
-  );
   return (
     <div className="container px-3 mx-auto flex h-screen justify-center">
       <div className="flex flex-col items-center gap-16 w-full h-full max-w-3xl">
@@ -283,8 +288,43 @@ export default function SearchPage() {
                         <CreateListButton />
                       </div>
                       <div className="mt-3 h-[120px]">
-                        <div className="text-xs text-muted-foreground mt-5">
-                          <SignedIn>No lists found</SignedIn>
+                        <div className="text-xs mt-5">
+                          <SignedIn>
+                            {lists?.data &&
+                            Array.isArray(lists.data) &&
+                            lists.data.length > 0 ? (
+                              <ul className="space-y-3">
+                                {lists.data.map(
+                                  (list: { id: string; name: string }) => (
+                                    <li key={list.id} className="w-full">
+                                      <button
+                                        className="flex items-center justify-between w-full"
+                                        onClick={() => {
+                                          fetcher.submit(
+                                            {
+                                              book: JSON.stringify(
+                                                selectedBook
+                                              ),
+                                            },
+                                            {
+                                              method: "PUT",
+                                              action: `/lists/${list.id}/book`, // TODO support removing
+                                            }
+                                          );
+                                        }}
+                                      >
+                                        {list.name}
+                                        <PlusCircleIcon className="size-4" />
+                                      </button>
+                                    </li>
+                                  )
+                                )}
+                              </ul>
+                            ) : (
+                              "No lists found"
+                            )}
+                          </SignedIn>
+
                           <SignedOut>
                             <SignInButton
                               signUpForceRedirectUrl={signUpForceRedirectUrl}

@@ -17,7 +17,7 @@ export async function action(args: ActionFunctionArgs) {
   });
 
   const result = await client.query<string>(fql`
-    BookList.create({ name: ${name}, books: [] })
+    BookList.create({ name: ${name}, books: [], userId: ${userId} })
   `);
 
   console.log("🚀 ~ action ~ result:", result);

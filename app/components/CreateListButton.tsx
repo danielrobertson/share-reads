@@ -10,6 +10,8 @@ import {
 import { Button } from "~/components/ui/button";
 import { Plus } from "lucide-react";
 import { useFetcher } from "@remix-run/react";
+import { useEffect, useState } from "react";
+
 import { Label } from "./ui/field";
 import { Input } from "./ui/input";
 
@@ -17,9 +19,17 @@ export const LIST_NAME_FORM_FIELD = "listName";
 
 export default function CreateListButton() {
   const fetcher = useFetcher();
+  const [open, setOpen] = useState(false);
+
+  // Watch fetcher state to close dialog on success
+  useEffect(() => {
+    if (fetcher.state === "idle" && fetcher.data) {
+      setOpen(false);
+    }
+  }, [fetcher.state, fetcher.data]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="secondary" size="default">
           <Plus />
@@ -50,7 +60,9 @@ export default function CreateListButton() {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Create</Button>
+            <Button type="submit" disabled={fetcher.state !== "idle"}>
+              {fetcher.state !== "idle" ? "Creating..." : "Create"}
+            </Button>
           </DialogFooter>
         </fetcher.Form>
       </DialogContent>
