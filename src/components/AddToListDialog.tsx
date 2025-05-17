@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,16 +8,16 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { BookVolume } from "@/services/BookAPI";
 import { 
-  getLists, 
+  fetchLists, 
   createList, 
   addBookToList, 
   BookList 
-} from "@/services/ListService";
-import { useToast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
-import { Input } from "@/components/ui/input";
+} from "@/services/SupabaseListService";
 
 type AddToListDialogProps = {
   book: BookVolume;
@@ -27,25 +27,34 @@ type AddToListDialogProps = {
 
 export const AddToListDialog = ({ book, isOpen, onClose }: AddToListDialogProps) => {
   const { toast } = useToast();
-  const [lists, setLists] = useState<BookList[]>(() => getLists());
+  const [lists, setLists] = useState<BookList[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [newListName, setNewListName] = useState("");
 
-  // Refresh lists when dialog opens
-  useState(() => {
+  useEffect(() => {
     if (isOpen) {
-      setLists(getLists());
+      const loadLists = async () => {
+        setIsLoading(true);
+        const fetchedLists = await fetchLists();
+        setLists(fetchedLists);
+        setIsLoading(false);
+      };
+      
+      loadLists();
     }
-  });
+  }, [isOpen]);
 
-  const handleAddToList = (listId: string) => {
+  const handleAddToList = async (listId: string) => {
     try {
-      addBookToList(listId, book);
-      toast({
-        title: "Book added",
-        description: `Added "${book.volumeInfo.title}" to your list`,
-      });
-      onClose();
+      const updated = await addBookToList(listId, book);
+      if (updated) {
+        toast({
+          title: "Book added",
+          description: `Added "${book.volumeInfo.title}" to your list`,
+        });
+        onClose();
+      }
     } catch (e) {
       console.error("Error adding book to list:", e);
       toast({
@@ -56,17 +65,21 @@ export const AddToListDialog = ({ book, isOpen, onClose }: AddToListDialogProps)
     }
   };
 
-  const handleCreateAndAdd = () => {
+  const handleCreateAndAdd = async () => {
     if (!newListName.trim()) return;
     
     try {
-      const newList = createList(newListName.trim());
-      addBookToList(newList.id, book);
-      toast({
-        title: "List created",
-        description: `Added "${book.volumeInfo.title}" to "${newListName.trim()}"`,
-      });
-      onClose();
+      const newList = await createList(newListName.trim());
+      if (newList) {
+        const updated = await addBookToList(newList.id, book);
+        if (updated) {
+          toast({
+            title: "List created",
+            description: `Added "${book.volumeInfo.title}" to "${newListName.trim()}"`,
+          });
+          onClose();
+        }
+      }
     } catch (e) {
       console.error("Error creating list:", e);
       toast({
@@ -85,7 +98,11 @@ export const AddToListDialog = ({ book, isOpen, onClose }: AddToListDialogProps)
         </DialogHeader>
 
         <div className="py-4 max-h-[60vh] overflow-y-auto">
-          {isCreatingNew ? (
+          {isLoading ? (
+            <div className="text-center py-4">
+              Loading your lists...
+            </div>
+          ) : isCreatingNew ? (
             <div className="space-y-4">
               <Input
                 placeholder="List name"

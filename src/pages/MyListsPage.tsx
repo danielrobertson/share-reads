@@ -3,33 +3,52 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ListCard } from "@/components/ListCard";
-import { getLists, BookList, createList } from "@/services/ListService";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { fetchLists, createList, BookList } from "@/services/SupabaseListService";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const MyListsPage = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [lists, setLists] = useState<BookList[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [newListName, setNewListName] = useState("");
 
   useEffect(() => {
-    // Load lists from storage
-    setLists(getLists());
-  }, []);
+    // Redirect to auth if not logged in
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+    
+    const loadLists = async () => {
+      setIsLoading(true);
+      const fetchedLists = await fetchLists();
+      setLists(fetchedLists);
+      setIsLoading(false);
+    };
+    
+    loadLists();
+  }, [user, navigate]);
 
-  const handleCreateList = () => {
+  const handleCreateList = async () => {
     if (!newListName.trim()) return;
     
     try {
-      const newList = createList(newListName.trim());
-      setLists([...lists, newList]);
-      setNewListName("");
-      setIsCreating(false);
-      toast({
-        title: "List created",
-        description: `"${newListName.trim()}" has been created`,
-      });
+      const newList = await createList(newListName.trim());
+      if (newList) {
+        setLists([newList, ...lists]);
+        setNewListName("");
+        setIsCreating(false);
+        toast({
+          title: "List created",
+          description: `"${newListName.trim()}" has been created`,
+        });
+      }
     } catch (e) {
       console.error("Error creating list:", e);
       toast({
@@ -39,6 +58,10 @@ const MyListsPage = () => {
       });
     }
   };
+
+  if (!user) {
+    return null; // Will redirect in useEffect
+  }
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -85,7 +108,9 @@ const MyListsPage = () => {
         </div>
       )}
 
-      {lists.length > 0 ? (
+      {isLoading ? (
+        <div className="text-center py-8">Loading your lists...</div>
+      ) : lists.length > 0 ? (
         <div className="space-y-4">
           {lists.map((list) => (
             <ListCard key={list.id} list={list} />

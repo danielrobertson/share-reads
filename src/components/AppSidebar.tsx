@@ -1,8 +1,10 @@
-import { NavLink } from "react-router-dom";
+
+import { NavLink, useNavigate } from "react-router-dom";
 import { Search, List, LogIn } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 type AppSidebarProps = {
   isOpen: boolean;
@@ -10,11 +12,23 @@ type AppSidebarProps = {
 
 export const AppSidebar = ({ isOpen }: AppSidebarProps) => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   
   // Helper to get user initials for avatar fallback
   const getUserInitials = () => {
     if (!user || !user.email) return "?";
     return user.email.charAt(0).toUpperCase();
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast("Signed out successfully");
+      navigate("/");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast("Failed to sign out. Please try again.");
+    }
   };
 
   if (!isOpen) {
@@ -91,7 +105,7 @@ export const AppSidebar = ({ isOpen }: AppSidebarProps) => {
                 variant="outline"
                 size="sm"
                 className="w-full text-xs"
-                onClick={signOut}
+                onClick={handleSignOut}
               >
                 Sign Out
               </Button>

@@ -1,11 +1,15 @@
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { BookList, getList, copyShareableUrl } from "@/services/ListService";
-import { BookList as BookListComponent } from "@/components/BookList";
 import { Button } from "@/components/ui/button";
 import { Edit, Link as LinkIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { BookList as BookListComponent } from "@/components/BookList";
+import { 
+  fetchList, 
+  BookList, 
+  copyShareableUrl 
+} from "@/services/SupabaseListService";
 
 const ListViewPage = () => {
   const { listId } = useParams<{ listId: string }>();
@@ -15,20 +19,25 @@ const ListViewPage = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (listId) {
-      try {
-        const foundList = getList(listId);
-        setList(foundList);
-        if (!foundList) {
-          setError("List not found");
+    const loadList = async () => {
+      if (listId) {
+        try {
+          setLoading(true);
+          const foundList = await fetchList(listId);
+          setList(foundList);
+          if (!foundList) {
+            setError("List not found");
+          }
+        } catch (e) {
+          console.error("Error loading list:", e);
+          setError("An error occurred while loading this list");
+        } finally {
+          setLoading(false);
         }
-      } catch (e) {
-        console.error("Error loading list:", e);
-        setError("An error occurred while loading this list");
-      } finally {
-        setLoading(false);
       }
-    }
+    };
+
+    loadList();
   }, [listId]);
 
   const handleCopyLink = async () => {

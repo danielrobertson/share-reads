@@ -1,20 +1,20 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  BookList, 
-  getList, 
-  updateList, 
-  removeBookFromList, 
-  deleteList 
-} from "@/services/ListService";
-import { BookVolume } from "@/services/BookAPI";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trash, Save, ArrowLeft, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  fetchList, 
+  updateList, 
+  removeBookFromList, 
+  deleteList, 
+  BookList 
+} from "@/services/SupabaseListService";
+import { BookVolume } from "@/services/BookAPI";
 
 const EditListPage = () => {
   const { listId } = useParams<{ listId: string }>();
@@ -29,43 +29,50 @@ const EditListPage = () => {
   const [saving, setSaving] = useState(false);
   
   useEffect(() => {
-    if (listId) {
-      try {
-        const foundList = getList(listId);
-        setList(foundList);
-        
-        if (foundList) {
-          setName(foundList.name);
-          setDescription(foundList.description);
-        } else {
-          setError("List not found");
+    const loadList = async () => {
+      if (listId) {
+        try {
+          setLoading(true);
+          const foundList = await fetchList(listId);
+          setList(foundList);
+          
+          if (foundList) {
+            setName(foundList.name);
+            setDescription(foundList.description || "");
+          } else {
+            setError("List not found");
+          }
+        } catch (e) {
+          console.error("Error loading list:", e);
+          setError("An error occurred while loading this list");
+        } finally {
+          setLoading(false);
         }
-      } catch (e) {
-        console.error("Error loading list:", e);
-        setError("An error occurred while loading this list");
-      } finally {
-        setLoading(false);
       }
-    }
+    };
+
+    loadList();
   }, [listId]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!list || !name.trim()) return;
     
     setSaving(true);
     try {
-      const updated = updateList({
-        ...list,
+      const updated = await updateList({
+        id: list.id,
         name: name.trim(),
-        description: description.trim()
+        description: description.trim() || null
       });
       
-      setList(updated);
-      toast({
-        title: "List updated",
-        description: "Your changes have been saved",
-      });
-      navigate(`/list/${list.id}`);
+      if (updated) {
+        setList(updated);
+        toast({
+          title: "List updated",
+          description: "Your changes have been saved",
+        });
+        navigate(`/list/${list.id}`);
+      }
     } catch (e) {
       console.error("Error updating list:", e);
       toast({
@@ -78,16 +85,18 @@ const EditListPage = () => {
     }
   };
 
-  const handleRemoveBook = (bookId: string) => {
+  const handleRemoveBook = async (bookId: string) => {
     if (!list || !listId) return;
     
     try {
-      const updated = removeBookFromList(listId, bookId);
-      setList(updated);
-      toast({
-        title: "Book removed",
-        description: "Book was removed from the list",
-      });
+      const updated = await removeBookFromList(listId, bookId);
+      if (updated) {
+        setList(updated);
+        toast({
+          title: "Book removed",
+          description: "Book was removed from the list",
+        });
+      }
     } catch (e) {
       console.error("Error removing book:", e);
       toast({
@@ -98,17 +107,19 @@ const EditListPage = () => {
     }
   };
 
-  const handleDeleteList = () => {
+  const handleDeleteList = async () => {
     if (!list || !listId) return;
     
     if (window.confirm("Are you sure you want to delete this list? This action cannot be undone.")) {
       try {
-        deleteList(listId);
-        toast({
-          title: "List deleted",
-          description: "The list has been permanently deleted",
-        });
-        navigate("/my-lists");
+        const success = await deleteList(listId);
+        if (success) {
+          toast({
+            title: "List deleted",
+            description: "The list has been permanently deleted",
+          });
+          navigate("/my-lists");
+        }
       } catch (e) {
         console.error("Error deleting list:", e);
         toast({
