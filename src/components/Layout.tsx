@@ -21,8 +21,8 @@ const Layout = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader toggleSidebar={toggleSidebar} />
-      <div className="flex flex-1 relative">
-        <div className="fixed top-16 bottom-0 z-10">
+      <div className="flex flex-1 pt-16 relative"> {/* Added pt-16 to account for fixed header height */}
+        <div className="fixed top-16 bottom-0 left-0 z-10">
           <AppSidebar isOpen={isSidebarOpen} />
         </div>
         <div className={`flex-1 flex flex-col ${isSidebarOpen ? 'md:ml-[232px]' : 'md:ml-16'}`}>
