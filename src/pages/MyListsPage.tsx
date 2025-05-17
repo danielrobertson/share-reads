@@ -66,6 +66,8 @@ const MyListsPage = () => {
               onChange={(e) => setNewListName(e.target.value)}
               className="flex-1"
               autoFocus
+              autoComplete="off"
+              data-form-type="other" 
             />
             <Button onClick={handleCreateList} disabled={!newListName.trim()}>
               Create

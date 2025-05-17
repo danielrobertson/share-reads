@@ -36,13 +36,15 @@ const SearchPage = () => {
     <div className="max-w-4xl mx-auto">
       <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Find Books to Share</h1>
       
-      <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 mb-6 md:mb-8">
+      <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 mb-6 md:mb-8"  autoComplete="off">
         <Input
           type="text"
           placeholder="Search by title, author, or keyword..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1"
+          autoComplete="off"
+          data-form-type="other" 
         />
         <Button 
           type="submit" 

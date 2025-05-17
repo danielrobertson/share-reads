@@ -166,6 +166,8 @@ const EditListPage = () => {
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter a name for your list"
             className="max-w-md"
+            autoComplete="off"
+            data-form-type="other" 
           />
         </div>
         
