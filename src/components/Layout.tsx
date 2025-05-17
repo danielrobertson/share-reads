@@ -12,14 +12,12 @@ const Layout = () => {
   useEffect(() => {
     setIsSidebarOpen(!isMobile);
   }, [isMobile]);
-  
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <AppHeader />
       <div className="flex flex-1 relative">
-        <AppSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        <AppSidebar isOpen={isSidebarOpen} />
         <div className="flex-1 flex flex-col">
           
           <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-background">
