@@ -29,12 +29,7 @@ export const AppSidebar = ({ isOpen }: AppSidebarProps) => {
 
   return (
     <div className="w-[232px] bg-sidebar min-h-screen flex flex-col border-r border-gray-800 transition-all duration-300">
-      <div className="flex flex-col py-4">
-        <div className="px-4 py-2 mb-4">
-          <h2 className="text-lg font-medium text-white">ShareReads</h2>
-          <p className="text-sm text-gray-400">Find and share great books</p>
-        </div>
-        
+      <div className="flex flex-col py-4">        
         <div className="space-y-1 px-3">
           <NavLink to="/" className={({ isActive }) =>
             `flex items-center gap-3 px-3 py-2 rounded-md ${isActive ? 'bg-accent text-white' : 'text-gray-400 hover:bg-accent/50 hover:text-white'} transition-colors`

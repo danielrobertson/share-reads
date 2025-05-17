@@ -8,7 +8,7 @@ export const AppHeader = ({ toggleSidebar }: AppHeaderProps) => {
     <header className="h-16 border-b border-border bg-background flex items-center px-4">
       <div className="flex items-center gap-2">
         <img 
-          src="/lovable-uploads/f5dbc430-959c-465a-b58e-f040f8a1a881.png" 
+          src="/logo.png" 
           alt="ShareReads Logo" 
           className="h-8 w-8"
         />
