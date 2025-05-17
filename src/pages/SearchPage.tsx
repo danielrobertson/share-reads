@@ -34,9 +34,9 @@ const SearchPage = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Find Books to Share</h1>
+      <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">Find Books to Share</h1>
       
-      <form onSubmit={handleSearch} className="flex gap-2 mb-8">
+      <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-2 mb-6 md:mb-8">
         <Input
           type="text"
           placeholder="Search by title, author, or keyword..."
@@ -44,7 +44,11 @@ const SearchPage = () => {
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1"
         />
-        <Button type="submit" disabled={isLoading}>
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full md:w-auto"
+        >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
@@ -68,13 +72,13 @@ const SearchPage = () => {
           onAddToList={handleAddToList} 
         />
       ) : searchTerm && !isLoading ? (
-        <div className="text-center py-12">
+        <div className="text-center py-8 md:py-12">
           <p className="text-muted-foreground">
             No books found for "{searchTerm}". Try another search term.
           </p>
         </div>
       ) : !searchTerm ? (
-        <div className="text-center py-12">
+        <div className="text-center py-8 md:py-12">
           <p className="text-muted-foreground">
             Enter a search term to find books.
           </p>

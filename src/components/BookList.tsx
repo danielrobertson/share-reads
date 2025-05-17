@@ -11,14 +11,14 @@ type BookListProps = {
 export const BookList = ({ books, onAddToList, showAddButton = true }: BookListProps) => {
   if (books.length === 0) {
     return (
-      <div className="text-center py-10">
+      <div className="text-center py-8 md:py-10">
         <p className="text-muted-foreground">No books found.</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 md:space-y-4">
       {books.map((book) => (
         <BookCard 
           key={book.id} 
