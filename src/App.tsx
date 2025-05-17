@@ -1,36 +1,36 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
 import Layout from "./components/Layout";
 import SearchPage from "./pages/SearchPage";
 import MyListsPage from "./pages/MyListsPage";
+import NotFound from "./pages/NotFound";
 import ListViewPage from "./pages/ListViewPage";
 import EditListPage from "./pages/EditListPage";
-import NotFound from "./pages/NotFound";
+import AuthPage from "./pages/AuthPage";
+import AuthCallback from "./pages/AuthCallback";
+import { AuthProvider } from "./hooks/useAuth";
+import { Toaster } from "./components/ui/sonner";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
         <Routes>
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<SearchPage />} />
             <Route path="my-lists" element={<MyListsPage />} />
-            <Route path="list/:listId" element={<ListViewPage />} />
-            <Route path="list/:listId/edit" element={<EditListPage />} />
+            <Route path="list/:id" element={<ListViewPage />} />
+            <Route path="list/:id/edit" element={<EditListPage />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+        <Toaster />
+      </Router>
+    </AuthProvider>
+  );
+}
 
 export default App;
