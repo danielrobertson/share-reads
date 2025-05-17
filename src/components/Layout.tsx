@@ -22,10 +22,10 @@ const Layout = () => {
     <div className="min-h-screen flex flex-col">
       <AppHeader toggleSidebar={toggleSidebar} />
       <div className="flex flex-1 pt-16 relative"> {/* Added pt-16 to account for fixed header height */}
-        <div className="fixed top-16 bottom-0 left-0 z-10">
+        <div className={`fixed top-16 bottom-0 left-0 z-10 transition-transform duration-300 ${!isSidebarOpen && isMobile ? '-translate-x-full' : 'translate-x-0'}`}>
           <AppSidebar isOpen={isSidebarOpen} />
         </div>
-        <div className={`flex-1 flex flex-col ${isSidebarOpen ? 'md:ml-[232px]' : 'md:ml-16'}`}>
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? (isMobile ? 'ml-0' : 'md:ml-[232px]') : 'md:ml-16'}`}>
           <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-background">
             <Outlet />
           </main>
