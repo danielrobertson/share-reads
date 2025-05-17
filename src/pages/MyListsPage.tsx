@@ -59,7 +59,7 @@ const MyListsPage = () => {
       {isCreating && (
         <div className="mb-6 p-4 border border-border rounded-md bg-card">
           <h3 className="text-lg font-medium mb-3">Create New List</h3>
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2">
             <Input
               placeholder="List name"
               value={newListName}
