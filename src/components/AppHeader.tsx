@@ -1,5 +1,5 @@
 
-import { Menu } from "lucide-react";
+import { PanelLeft } from "lucide-react";
 
 type AppHeaderProps = {
   toggleSidebar: () => void;
@@ -12,9 +12,14 @@ export const AppHeader = ({ toggleSidebar }: AppHeaderProps) => {
         onClick={toggleSidebar} 
         className="p-2 rounded-md hover:bg-muted transition-colors"
       >
-        <Menu size={20} />
+        <PanelLeft size={20} />
       </button>
       <div className="ml-4 flex items-center gap-2">
+        <img 
+          src="/lovable-uploads/f5dbc430-959c-465a-b58e-f040f8a1a881.png" 
+          alt="ShareReads Logo" 
+          className="h-8 w-8"
+        />
         <span className="text-xl font-semibold text-white">ShareReads</span>
       </div>
     </header>
