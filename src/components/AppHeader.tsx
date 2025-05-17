@@ -1,12 +1,30 @@
 
+import { Menu, LogIn } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
+
 type AppHeaderProps = {
   toggleSidebar?: () => void;
 };
 
 export const AppHeader = ({ toggleSidebar }: AppHeaderProps) => {
+  const { user } = useAuth();
+  
   return (
-    <header className="h-16 border-b border-border bg-background flex items-center px-4">
+    <header className="h-16 border-b border-border bg-background flex items-center justify-between px-4">
       <div className="flex items-center gap-2">
+        {toggleSidebar && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleSidebar}
+            className="mr-2"
+          >
+            <Menu size={20} />
+          </Button>
+        )}
+        
         <img 
           src="/logo.png" 
           alt="ShareReads Logo" 
@@ -14,6 +32,15 @@ export const AppHeader = ({ toggleSidebar }: AppHeaderProps) => {
         />
         <span className="text-xl font-semibold text-white">ShareReads</span>
       </div>
+      
+      {!user && (
+        <Link to="/auth">
+          <Button variant="outline" size="sm" className="ml-auto md:hidden">
+            <LogIn className="mr-2 h-4 w-4" />
+            Sign In
+          </Button>
+        </Link>
+      )}
     </header>
   );
 };

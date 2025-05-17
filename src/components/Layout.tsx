@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
@@ -13,13 +14,16 @@ const Layout = () => {
     setIsSidebarOpen(!isMobile);
   }, [isMobile]);
 
+  const toggleSidebar = () => {
+    setIsSidebarOpen(prev => !prev);
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
-      <AppHeader />
+      <AppHeader toggleSidebar={toggleSidebar} />
       <div className="flex flex-1 relative">
         <AppSidebar isOpen={isSidebarOpen} />
         <div className="flex-1 flex flex-col">
-          
           <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8 bg-background">
             <Outlet />
           </main>
