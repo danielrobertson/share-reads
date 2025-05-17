@@ -42,7 +42,7 @@ export const AppSidebar = ({ isOpen }: AppSidebarProps) => {
               <AvatarFallback>{getUserInitials()}</AvatarFallback>
             </Avatar>
           ) : (
-            <NavLink to="/auth" className="text-gray-400 hover:bg-accent/50 hover:text-white p-3 rounded-md transition-colors">
+            <NavLink to="/auth" className="text-gray-400 hover:bg-accent/50 hover:text-white rounded-md transition-colors">
               <LogIn size={20} />
             </NavLink>
           )}
@@ -81,7 +81,7 @@ export const AppSidebar = ({ isOpen }: AppSidebarProps) => {
                   <AvatarImage src={user.user_metadata?.avatar_url} />
                   <AvatarFallback>{getUserInitials()}</AvatarFallback>
                 </Avatar>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-white truncate">
                     {user.email}
                   </p>
@@ -97,7 +97,7 @@ export const AppSidebar = ({ isOpen }: AppSidebarProps) => {
               </Button>
             </div>
           ) : (
-            <NavLink to="/auth">
+            <NavLink to="/auth" >
               <Button variant="outline" className="w-full">
                 <LogIn className="mr-2 h-4 w-4" />
                 Sign In
