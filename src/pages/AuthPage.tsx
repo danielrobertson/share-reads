@@ -105,6 +105,26 @@ const AuthPage = () => {
           <TabsContent value="signin">
             <form onSubmit={handleSignIn}>
               <CardContent className="space-y-4 pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="w-full mb-4"
+                  onClick={handleGoogleSignIn}
+                >
+                  Sign in with Google
+                </Button>
+                
+                <div className="relative w-full my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or continue with email
+                    </span>
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <Input
@@ -129,29 +149,9 @@ const AuthPage = () => {
                 </div>
               </CardContent>
               
-              <CardFooter className="flex flex-col space-y-4">
+              <CardFooter>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Signing in..." : "Sign In"}
-                </Button>
-                
-                <div className="relative w-full">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-gray-300" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
-                
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={handleGoogleSignIn}
-                >
-                  Google
                 </Button>
               </CardFooter>
             </form>
@@ -160,6 +160,26 @@ const AuthPage = () => {
           <TabsContent value="signup">
             <form onSubmit={handleSignUp}>
               <CardContent className="space-y-4 pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="w-full mb-4"
+                  onClick={handleGoogleSignIn}
+                >
+                  Sign up with Google
+                </Button>
+                
+                <div className="relative w-full my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">
+                      Or continue with email
+                    </span>
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
@@ -184,29 +204,9 @@ const AuthPage = () => {
                 </div>
               </CardContent>
               
-              <CardFooter className="flex flex-col space-y-4">
+              <CardFooter>
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating account..." : "Create Account"}
-                </Button>
-                
-                <div className="relative w-full">
-                  <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t border-gray-300" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
-                
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={handleGoogleSignIn}
-                >
-                  Google
                 </Button>
               </CardFooter>
             </form>
