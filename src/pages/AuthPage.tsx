@@ -111,6 +111,7 @@ const AuthPage = () => {
                   className="w-full mb-4"
                   onClick={handleGoogleSignIn}
                 >
+                  <img src="/google-logo.png" alt="Google" className="w-4 h-4 mr-2" />
                   Sign in with Google
                 </Button>
                 
@@ -162,10 +163,11 @@ const AuthPage = () => {
               <CardContent className="space-y-4 pt-4">
                 <Button 
                   type="button" 
-                  variant="outline" 
+                  variant="outline"
                   className="w-full mb-4"
                   onClick={handleGoogleSignIn}
                 >
+                  <img src="/google-logo.png" alt="Google" className="w-4 h-4 mr-2" />
                   Sign up with Google
                 </Button>
                 
@@ -174,7 +176,7 @@ const AuthPage = () => {
                     <span className="w-full border-t border-gray-300" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">
+                    <span className="bg px-2 text-muted-foreground">
                       Or continue with email
                     </span>
                   </div>
