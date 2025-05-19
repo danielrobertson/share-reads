@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { LucideGoogle } from "lucide-react";
 
 const AuthPage = () => {
   const { user, signIn, signUp, signInWithGoogle } = useAuth();
@@ -109,11 +108,10 @@ const AuthPage = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  className="w-full mb-4 flex items-center gap-2"
+                  className="w-full mb-4"
                   onClick={handleGoogleSignIn}
                 >
-                  <LucideGoogle size={18} />
-                  <span>Sign in with Google</span>
+                  Sign in with Google
                 </Button>
                 
                 <div className="relative w-full my-4">
@@ -165,11 +163,10 @@ const AuthPage = () => {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  className="w-full mb-4 flex items-center gap-2"
+                  className="w-full mb-4"
                   onClick={handleGoogleSignIn}
                 >
-                  <LucideGoogle size={18} />
-                  <span>Sign up with Google</span>
+                  Sign up with Google
                 </Button>
                 
                 <div className="relative w-full my-4">
