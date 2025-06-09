@@ -18,6 +18,8 @@ import {
   addBookToList, 
   BookList 
 } from "@/services/SupabaseListService";
+import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 
 type AddToListDialogProps = {
   book: BookVolume;
@@ -31,6 +33,8 @@ export const AddToListDialog = ({ book, isOpen, onClose }: AddToListDialogProps)
   const [isLoading, setIsLoading] = useState(true);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [newListName, setNewListName] = useState("");
+
+  const { user } = useAuth();
 
   useEffect(() => {
     if (isOpen) {
@@ -97,7 +101,15 @@ export const AddToListDialog = ({ book, isOpen, onClose }: AddToListDialogProps)
           <DialogTitle>Add to List</DialogTitle>
         </DialogHeader>
 
-        <div className="py-4 max-h-[60vh] overflow-y-auto">
+        {!user ? (
+          <div className="py-4 max-h-[60vh] overflow-y-auto">
+            <p className="text-center text-muted-foreground py-4">
+              Please <Link to="/auth" className="text-blue-500 hover:underline">sign in</Link> to add books to your lists
+            </p>
+          </div>
+        ) : (
+
+          <div className="py-4 max-h-[60vh] overflow-y-auto">
           {isLoading ? (
             <div className="text-center py-4">
               Loading your lists...
@@ -164,6 +176,7 @@ export const AddToListDialog = ({ book, isOpen, onClose }: AddToListDialogProps)
             </>
           )}
         </div>
+        )}
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
